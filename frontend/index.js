@@ -40,8 +40,8 @@ function log(s) {
     log('Registering input app...');
     await lunaCall('luna://com.webos.service.eim/addDevice', {
       appId: 'org.webosbrew.autostart',
-      pigImage: '',
-      mvpdIcon: '',
+      pigImage: 'icon.png',
+      mvpdIcon: 'icon.png',
       type: 'MVPD_IP',
       label: 'org.webosbrew.autostart',
       description: 'autostart',
