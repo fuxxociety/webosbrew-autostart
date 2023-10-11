@@ -45,7 +45,7 @@ function log(s) {
       type: 'MVPD_IP',
       label: 'org.webosbrew.autostart',
       description: 'autostart',
-      showPopup: true,
+      showPopup: false,
     });
 
     await retry(3, async () => {
