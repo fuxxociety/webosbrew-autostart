@@ -1,20 +1,37 @@
-name: Manually Triggered Workflow
+name: Manual Build & Release
+
 on:
   workflow_dispatch:
-    inputs:
-      logLevel:
-        description: 'Log level'
-        required: true
-        default: 'warning'
-      environment:
-        description: 'Environment to deploy'
-        required: false
-        default: 'staging'
+
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Run a one-line script
-        run: echo "Hello, ${{ github.event.inputs.environment }}!"
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+
+    - run: npm ci
+    - run: npm run build
+    - run: npm run package
+
+    - name: Get release
+      id: get_release
+      uses: bruceadams/get-release@v1.3.2
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+
+    - name: Upload Release assets
+      uses: ncipollo/release-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        name: Release ${{ steps.get_release.outputs.tag_name }}
+        allowUpdates: true
+        omitNameDuringUpdate: true
+        omitBodyDuringUpdate: true
+        omitPrereleaseDuringUpdate: true
+        artifacts: '*.ipk'
